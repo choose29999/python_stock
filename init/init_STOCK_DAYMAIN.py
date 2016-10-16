@@ -49,7 +49,7 @@ def isInt(value):
     return False
 
 def log(msg):
-	log=open('log/STOCK_DAYMAIN.log','a')
+	log=open('../log/STOCK_DAYMAIN.log','a')
 	log.writelines(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())+' '+msg+'\n')
 	log.close()
  
@@ -171,7 +171,10 @@ for year in range(2015,endYear+1):
 		form_data['query_year']=year
 		form_data['query_month']=month
 		while True:
-			r = requests.post(url,data=form_data)
+			try:
+				r = requests.post(url,data=form_data)
+			except:
+				continue
 			#TODO how to check if the return page is available
 			if r.status_code != requests.codes.ok:
 				continue
@@ -190,17 +193,17 @@ for year in range(2015,endYear+1):
 			date       =td[0].get_text().split('/')
 			date[0]=int(date[0])+1911
 			trade_date=str(date[0])+'/'+date[1]+'/'+date[2]
-			price_high  =td[4].get_text()
+			price_high  =td[4].get_text().replace(',', '')
 			if float(price_high) == 0:
 				#log(sys.argv[1]+':'+trade_date+':price_high is 0')
 				price_high = last_day_close
-			price_low   =td[5].get_text()
+			price_low   =td[5].get_text().replace(',', '')
 			if float(price_low) == 0:
 				price_low = last_day_close
-			price_open  =td[3].get_text()
+			price_open  =td[3].get_text().replace(',', '')
 			if float(price_open) == 0:
 				price_open = last_day_close
-			price_close =td[6].get_text()
+			price_close =td[6].get_text().replace(',', '')
 			if float(price_close) == 0:
 				price_close = last_day_close
 			trade_money =td[2].get_text().replace(',', '')
